@@ -1,0 +1,19 @@
+{
+  "name": "filefly",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "type-check": "turbo type-check",
+    "dev": "turbo dev",
+    "format": "prettier --write \"**/*.{js,mjs,cjs,ts,mts,cts,json,json5,md,mdx,jsx,tsx}\"",
+    "prepare": "husky"
+  },
+  "packageManager": "pnpm@9.6.0",
+  "devDependencies": {
+    "husky": "^9.1.4",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.11"
+  }
+}
