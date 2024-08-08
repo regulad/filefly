@@ -1,0 +1,31 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "src/**/*.{js,ts,jsx,tsx}",
+        "electron/**/*.{js,ts}",
+        "package.json",
+        "electron-builder.json",
+        "vite.config.ts"
+      ],
+      "outputs": ["dist/**", "release/**"],
+      "passThroughEnv": ["ELECTRON_RENDERER_URL"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "passThroughEnv": ["ELECTRON_RENDERER_URL"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tests/**/*.{js,ts,jsx,tsx}"],
+      "outputs": []
+    }
+  }
+}

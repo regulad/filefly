@@ -6,8 +6,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
 module.exports = {
   extends: ["eslint:recommended", "prettier", "turbo"],
   plugins: ["only-warn"],
-  globals: {
-  },
+  globals: {},
   env: {
     node: true,
   },
