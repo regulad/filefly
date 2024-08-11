@@ -1,8 +1,8 @@
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
-import tailwind from "tailwindcss";
 import autoprefixer from "autoprefixer";
+import tailwind from "tailwindcss";
+import { resolve } from "path";
 
 export default defineConfig({
   main: {
@@ -20,11 +20,8 @@ export default defineConfig({
     plugins: [react()],
     css: {
       postcss: {
-        plugins: [
-          tailwind,
-          autoprefixer
-        ]
-      }
-    }
+        plugins: [tailwind, autoprefixer],
+      },
+    },
   },
 });
