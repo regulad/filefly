@@ -89,6 +89,9 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^3.0.0
         version: 3.0.0(electron@31.3.1)
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       electron-updater:
         specifier: ^6.1.7
         version: 6.2.1
@@ -105,6 +108,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -120,6 +126,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.1
         version: 4.3.1(vite@5.3.5(@types/node@20.14.14))
+      autoprefixer:
+        specifier: ^10.4.18
+        version: 10.4.20(postcss@8.4.41)
       electron:
         specifier: ^31.0.2
         version: 31.3.1
@@ -135,6 +144,9 @@ importers:
       eslint-plugin-react:
         specifier: ^7.34.3
         version: 7.35.0(eslint@8.57.0)
+      postcss:
+        specifier: ^8.4.35
+        version: 8.4.41
       prettier:
         specifier: ^3.3.2
         version: 3.3.3
@@ -144,6 +156,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.9
       typescript:
         specifier: ^5.5.2
         version: 5.5.4
