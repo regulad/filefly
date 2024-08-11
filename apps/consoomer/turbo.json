@@ -1,0 +1,48 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "globalDependencies": ["poetry.lock"],
+  "tasks": {
+    "prepare": {
+      "outputs": ["**/.venv/**"]
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["flake8"],
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": []
+    },
+    "type-check": {
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": [".mypy_cache/**"]
+    },
+    "format": {
+      "dependsOn": ["sort-imports"],
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": ["src/**/*.py"]
+    },
+    "format:check": {
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": []
+    },
+    "sort-imports": {
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": ["src/**/*.py"]
+    },
+    "sort-imports:check": {
+      "inputs": ["src/**/*.py", "pyproject.toml"],
+      "outputs": []
+    },
+    "flake8": {
+      "inputs": ["src/**/*.py", ".flake8"],
+      "outputs": []
+    }
+  }
+}

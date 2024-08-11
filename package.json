@@ -7,13 +7,16 @@
     "test": "turbo test",
     "type-check": "turbo type-check",
     "dev": "turbo dev",
-    "format": "prettier --write \"**/*.{js,mjs,cjs,ts,mts,cts,json,json5,md,mdx,jsx,tsx}\"",
+    "format": "prettier --write \"**/*.{js,mjs,cjs,ts,mts,cts,json,json5,md,mdx,jsx,tsx,toml,xml}\"",
     "prepare": "husky"
   },
   "packageManager": "pnpm@9.6.0",
   "devDependencies": {
     "husky": "^9.1.4",
     "prettier": "^3.3.3",
+    "prettier-plugin-sort-imports": "^1.8.6",
+    "prettier-plugin-toml": "^2.0.1",
+    "prettier-plugin-xml": "^0.1.0",
     "turbo": "^2.0.11"
   }
 }

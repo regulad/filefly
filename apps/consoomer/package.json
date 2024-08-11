@@ -5,7 +5,14 @@
   "scripts": {
     "prepare": "poetry install",
     "start": "poetry run python -m consoomer",
-    "dev": "poetry run python -m consoomer"
+    "dev": "poetry run python -m consoomer",
+    "lint": "poetry run pylint src",
+    "type-check": "poetry run mypy src",
+    "format": "poetry run black src",
+    "format:check": "poetry run black --check src",
+    "sort-imports": "poetry run isort src",
+    "sort-imports:check": "poetry run isort --check-only src",
+    "flake8": "poetry run flake8 src"
   },
   "keywords": [],
   "author": ""

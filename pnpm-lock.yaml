@@ -14,6 +14,15 @@ importers:
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
+      prettier-plugin-sort-imports:
+        specifier: ^1.8.6
+        version: 1.8.6(typescript@5.5.4)
+      prettier-plugin-toml:
+        specifier: ^2.0.1
+        version: 2.0.1(prettier@3.3.3)
+      prettier-plugin-xml:
+        specifier: ^0.1.0
+        version: 0.1.0
       turbo:
         specifier: ^2.0.11
         version: 2.0.11
@@ -973,6 +982,12 @@ packages:
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
+
+  '@taplo/core@0.1.1':
+    resolution: {integrity: sha512-BG/zLGf5wiNXGEVPvUAAX/4ilB3PwDUY2o0MV0y47mZbDZ9ad9UK/cIQsILat3bqbPJsALVbU6k3cskNZ3vAQg==}
+
+  '@taplo/lib@0.4.0-alpha.2':
+    resolution: {integrity: sha512-DV/Re3DPVY+BhBtLZ3dmP4mP6YMLSsgq9qGLXwOV38lvNF/fBlgvQswzlXmzCEefL/3q2eMoefZpOI/+GLuCNA==}
 
   '@tootallnate/once@2.0.0':
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -2167,6 +2182,10 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
+  fast-xml-parser@3.21.1:
+    resolution: {integrity: sha512-FTFVjYoBOZTJekiUsawGsSYV9QL0A+zDYCRj7y34IO6Jg+2IMYEtQa+bbictpdpV8dHxXywqU7C0gRDEOFtBFg==}
+    hasBin: true
+
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
 
@@ -3086,6 +3105,21 @@ packages:
       prettier:
         optional: true
 
+  prettier-plugin-sort-imports@1.8.6:
+    resolution: {integrity: sha512-jOEzFCyvdDL8geCmr4DP/VBKULZ6OaDQHBEmHTuFHf4EzWyedmwnHg2KawNy5rnrQ6gnCqwrfgymMQZctzCE1Q==}
+    peerDependencies:
+      typescript: '>4.0.0'
+
+  prettier-plugin-toml@2.0.1:
+    resolution: {integrity: sha512-99z1YOkViECHtXQjGIigd3talI/ybUI1zB3yniAwUrlWBXupNXThB1hM6bwSMUEj2/+tomTlMtT98F5t4s8IWA==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      prettier: ^3.0.3
+
+  prettier-plugin-xml@0.1.0:
+    resolution: {integrity: sha512-rywliZ83SVxLT5+OOWjT28g8jgshks61+nN+9e7ss6N519sz5UPS0/NzaS9M+qUYY9GVN0JXEa4R8aJPlMrRAA==}
+    deprecated: Please migrate over to using @prettier/plugin-xml
+
   prettier@3.3.3:
     resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
     engines: {node: '>=14'}
@@ -3465,6 +3499,9 @@ packages:
   strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
+
+  strnum@1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
 
   styled-jsx@5.1.3:
     resolution: {integrity: sha512-qLRShOWTE/Mf6Bvl72kFeKBl8N2Eq9WIFfoAuvbtP/6tqlnj1SCjv117n2MIjOPpa1jTorYqLJgsHKy5Y3ziww==}
@@ -4464,6 +4501,12 @@ snapshots:
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@taplo/core@0.1.1': {}
+
+  '@taplo/lib@0.4.0-alpha.2':
+    dependencies:
+      '@taplo/core': 0.1.1
 
   '@tootallnate/once@2.0.0': {}
 
@@ -6339,6 +6382,10 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
+  fast-xml-parser@3.21.1:
+    dependencies:
+      strnum: 1.0.5
+
   fastq@1.17.1:
     dependencies:
       reusify: 1.0.4
@@ -7243,6 +7290,21 @@ snapshots:
     optionalDependencies:
       prettier: 3.3.3
 
+  prettier-plugin-sort-imports@1.8.6(typescript@5.5.4):
+    dependencies:
+      prettier: 3.3.3
+      typescript: 5.5.4
+
+  prettier-plugin-toml@2.0.1(prettier@3.3.3):
+    dependencies:
+      '@taplo/lib': 0.4.0-alpha.2
+      prettier: 3.3.3
+
+  prettier-plugin-xml@0.1.0:
+    dependencies:
+      fast-xml-parser: 3.21.1
+      prettier: 3.3.3
+
   prettier@3.3.3: {}
 
   process-nextick-args@2.0.1: {}
@@ -7731,6 +7793,8 @@ snapshots:
       min-indent: 1.0.1
 
   strip-json-comments@3.1.1: {}
+
+  strnum@1.0.5: {}
 
   styled-jsx@5.1.3(react@19.0.0-rc-f994737d14-20240522):
     dependencies:
