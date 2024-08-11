@@ -1,0 +1,29 @@
+# Use the official Node.js Alpine image
+FROM node:20-alpine
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Set the working directory to the root of the monorepo
+WORKDIR /app
+
+# Copy the entire monorepo
+COPY . .
+
+# Install dependencies for the entire workspace
+# Ignore scripts so we don't try to call and python dependencies or other natives that we don't have
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=2999
+
+# Expose the port the app runs on
+EXPOSE 2999
+
+# Set the working directory to the relay-server
+WORKDIR /app/apps/relay-server
+
+# Run the relay-server
+CMD ["pnpm", "start"]
