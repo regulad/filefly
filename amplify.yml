@@ -13,9 +13,9 @@ applications:
         baseDirectory: apps/web/.next
         files:
           - '**/*'
-      cache:
-        paths:
-          - .next/cache/**/*
-          - node_modules/**/*
+#      cache:
+#        paths:
+#          - .next/cache/**/*
+#          - node_modules/**/*
       buildPath: /
     appRoot: apps/web
