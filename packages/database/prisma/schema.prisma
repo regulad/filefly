@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator javascript {
+  provider = "prisma-client-js"
+}
+
+generator python {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// task stuff
+
+enum TaskStatus {
+  PENDING
+  FINISHED
+}
+
+enum TaskType {
+  VECTORIZE
+}
+
+model TrackedTask {
+  id                    String     @id @unique @default(cuid())
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  taskCompleted         DateTime?
+  taskWebhookSecretHash String
+  status                TaskStatus
+  type                  TaskType
+  taskError             Json?
+  taskPayload           Json?
+  taskResult            Json?
+}
+
+// oauth stuff
+
+// cognito entity id: us-east-1:12345678-1234-1234-1234-123456789012
+
+model User {
+  id String @id @unique // the cognito entity id
+
+  dropboxAccounts     DropboxAccount[]
+  googleDriveAccounts GoogleDriveAccount[]
+  onedriveAccounts    MicrosoftOneDriveAccount[]
+}
+
+model DropboxAccount {
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+
+  // these are fields determined from the accessToken
+  accountId String   @id @unique
+  expiresAt DateTime
+  scopes    String[]
+}
+
+model GoogleDriveAccount {
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+
+  // these are fields determined from the accessToken
+  accountId String   @id @unique
+  expiresAt DateTime
+  scopes    String[]
+}
+
+model MicrosoftOneDriveAccount {
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+
+  // these are fields determined from the accessToken
+  accountId String   @id @unique
+  expiresAt DateTime
+  scopes    String[]
+}

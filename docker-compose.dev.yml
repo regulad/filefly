@@ -4,9 +4,9 @@ services:
   postgres:
     image: postgres:14
     environment:
-      POSTGRES_DB: devdb
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: filefly
+      POSTGRES_USER: filefly
+      POSTGRES_PASSWORD: filefly
     ports:
       - "5432:5432"
     volumes:
@@ -26,8 +26,8 @@ services:
       - "5672:5672"  # AMQP protocol port
       - "15672:15672"  # Management UI port
     environment:
-      RABBITMQ_DEFAULT_USER: devuser
-      RABBITMQ_DEFAULT_PASS: devpassword
+      RABBITMQ_DEFAULT_USER: filefly
+      RABBITMQ_DEFAULT_PASS: filefly
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 

@@ -3,11 +3,13 @@
   "extends": ["//"],
   "tasks": {
     "dev": {
+      "dependsOn": ["@repo/db#db:generate"],
       "cache": false,
       "persistent": true,
       "env": ["HOST", "PORT"]
     },
     "start": {
+      "dependsOn": ["@repo/db#db:generate"],
       "cache": false,
       "persistent": true,
       "env": ["HOST", "PORT"]

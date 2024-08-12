@@ -7,10 +7,15 @@
       "outputs": ["**/.venv/**"]
     },
     "start": {
+      "dependsOn": ["db:generate"],
       "cache": false,
       "persistent": true
     },
+    "db:generate": {
+      "cache": false
+    },
     "dev": {
+      "dependsOn": ["db:generate"],
       "cache": false,
       "persistent": true
     },
@@ -20,6 +25,7 @@
       "outputs": []
     },
     "type-check": {
+      "dependsOn": ["db:generate"],
       "inputs": ["src/**/*.py", "pyproject.toml"],
       "outputs": [".mypy_cache/**"]
     },

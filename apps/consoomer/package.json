@@ -12,7 +12,11 @@
     "format:check": "poetry run black --check src",
     "sort-imports": "poetry run isort src",
     "sort-imports:check": "poetry run isort --check-only src",
-    "flake8": "poetry run flake8 src"
+    "flake8": "poetry run flake8 src",
+    "db:generate": "poetry run prisma generate --generator python --schema ../../packages/database/prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@repo/db": "workspace:*"
   },
   "keywords": [],
   "author": ""

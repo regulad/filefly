@@ -1,2 +1,2 @@
 pnpm format
-turbo lint test type-check
+turbo lint test type-check format

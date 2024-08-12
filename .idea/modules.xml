@@ -3,11 +3,13 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/apps/consoomer/consoomer.iml" filepath="$PROJECT_DIR$/apps/consoomer/consoomer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/database/database.iml" filepath="$PROJECT_DIR$/packages/database/database.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/docs/docs.iml" filepath="$PROJECT_DIR$/apps/docs/docs.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/eslint-config/eslint-config.iml" filepath="$PROJECT_DIR$/packages/eslint-config/eslint-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/filefly.iml" filepath="$PROJECT_DIR$/.idea/filefly.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/relay-client/relay-client.iml" filepath="$PROJECT_DIR$/apps/relay-client/relay-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/relay-server/relay-server.iml" filepath="$PROJECT_DIR$/apps/relay-server/relay-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/tailwind-config/tailwind-config.iml" filepath="$PROJECT_DIR$/packages/tailwind-config/tailwind-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/typescript-config/typescript-config.iml" filepath="$PROJECT_DIR$/packages/typescript-config/typescript-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/packages/ui/ui.iml" filepath="$PROJECT_DIR$/packages/ui/ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/apps/web/web.iml" filepath="$PROJECT_DIR$/apps/web/web.iml" />
