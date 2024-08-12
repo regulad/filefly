@@ -11,7 +11,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies for the entire workspace
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --filter relay-server
 
 # Set environment variables
 ENV NODE_ENV=production

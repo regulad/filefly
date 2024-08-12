@@ -5,7 +5,7 @@ applications:
         preBuild:
           commands:
             - npm install -g pnpm
-            - pnpm i
+            - pnpm i --filter=web
         build:
           commands:
             - pnpm dlx "turbo@^2.0.11" run build --filter=web
