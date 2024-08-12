@@ -12,10 +12,11 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@repo/db": "workspace:*",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "@repo/db": "workspace:*"
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

@@ -1,6 +1,27 @@
 import express, { type Express } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import * as fs from "node:fs";
+import path from "node:path";
+import dotenv from "dotenv";
+
+function loadEnvFiles() {
+  const envLocal = path.resolve(process.cwd(), ".env.local");
+  const envDefault = path.resolve(process.cwd(), ".env");
+
+  // Load .env.local first (if it exists)
+  if (fs.existsSync(envLocal)) {
+    dotenv.config({ path: envLocal });
+  }
+
+  // Load .env second, allowing it to override .env.local
+  dotenv.config({ path: envDefault });
+
+  // You can add more specific .env files here if needed
+  // For example: .env.development.local, .env.test.local, etc.
+}
+
+loadEnvFiles();
 
 const app: Express = express();
 // eslint-disable-next-line turbo/no-undeclared-env-vars -- declared in workspace turbo.json

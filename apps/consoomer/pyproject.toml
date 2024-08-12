@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 prisma = "^0.14.0"
+python-dotenv = "^1.0.1"
+aio-pika = "^9.4.2"
+redis = { extras = ["hiredis"], version = "^5.0.8" }
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.1"
@@ -30,7 +33,7 @@ warn_unused_ignores = true
 show_error_codes = true
 
 [tool.pylint.format]
-max-line-length = "88"
+max-line-length = "120"
 
 [tool.black]
 line-length = 120
