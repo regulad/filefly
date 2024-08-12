@@ -162,3 +162,8 @@ next-env.d.ts
 
 ### Turborepo
 .turbo
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*

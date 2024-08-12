@@ -12,11 +12,22 @@
   },
   "packageManager": "pnpm@9.6.0",
   "devDependencies": {
+    "@aws-amplify/backend": "^1.0.4",
+    "@aws-amplify/backend-cli": "^1.2.2",
+    "aws-cdk": "^2",
+    "aws-cdk-lib": "^2",
+    "constructs": "^10.0.0",
+    "esbuild": "^0.23.0",
     "husky": "^9.1.4",
     "prettier": "^3.3.3",
     "prettier-plugin-sort-imports": "^1.8.6",
     "prettier-plugin-toml": "^2.0.1",
     "prettier-plugin-xml": "^0.1.0",
-    "turbo": "^2.0.11"
+    "tsx": "^4.16.5",
+    "turbo": "^2.0.11",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "aws-amplify": "^6.5.0"
   }
 }

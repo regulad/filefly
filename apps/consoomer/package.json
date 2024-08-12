@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "prepare": "poetry install",
+    "prepare": "command -v poetry >/dev/null 2>&1 && poetry install || echo 'Poetry is not installed' >> prepare.log",
     "start": "poetry run python -m consoomer",
     "dev": "poetry run python -m consoomer",
     "lint": "poetry run pylint src",

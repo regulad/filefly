@@ -11,8 +11,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies for the entire workspace
-# Ignore scripts so we don't try to call and python dependencies or other natives that we don't have
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm install --frozen-lockfile
 
 # Set environment variables
 ENV NODE_ENV=production
