@@ -18,7 +18,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// task stuff
+// Task related models and enums
 
 enum TaskStatus {
   PENDING
@@ -42,53 +42,39 @@ model TrackedTask {
   taskResult            Json?
 }
 
-// oauth stuff
+// OAuth related models and enums
 
-// cognito entity id: us-east-1:12345678-1234-1234-1234-123456789012
+enum ProviderType {
+  DROPBOX
+  GOOGLE_DRIVE
+  MICROSOFT_ONEDRIVE
+}
 
 model User {
   id String @id @unique // the cognito entity id
 
-  dropboxAccounts     DropboxAccount[]
-  googleDriveAccounts GoogleDriveAccount[]
-  onedriveAccounts    MicrosoftOneDriveAccount[]
+  providerAccounts ProviderAccount[]
 }
 
-model DropboxAccount {
-  owner   User   @relation(fields: [ownerId], references: [id])
+model ProviderAccount {
+  id      String       @id @unique @default(cuid())
+  owner   User         @relation(fields: [ownerId], references: [id])
   ownerId String
+  type    ProviderType
 
-  accessTokenEncrypted  String
-  refreshTokenEncrypted String
+  accessTokenEncrypted             String
+  accessTokenInitializationVector  String
+  refreshTokenEncrypted            String
+  refreshTokenInitializationVector String
 
   // these are fields determined from the accessToken
-  accountId String   @id @unique
-  expiresAt DateTime
-  scopes    String[]
-}
+  accountId             String    @unique
+  accessTokenExpiresAt  DateTime
+  refreshTokenExpiresAt DateTime?
+  scopes                String[]
 
-model GoogleDriveAccount {
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  accessTokenEncrypted  String
-  refreshTokenEncrypted String
-
-  // these are fields determined from the accessToken
-  accountId String   @id @unique
-  expiresAt DateTime
-  scopes    String[]
-}
-
-model MicrosoftOneDriveAccount {
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String
-
-  accessTokenEncrypted  String
-  refreshTokenEncrypted String
-
-  // these are fields determined from the accessToken
-  accountId String   @id @unique
-  expiresAt DateTime
-  scopes    String[]
+  @@unique([ownerId, type, accountId])
 }

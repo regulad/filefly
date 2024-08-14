@@ -2,6 +2,7 @@
   "name": "filefly",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "node -e \"if(process.platform === 'win32') { console.error('Windows is not supported'); process.exit(1); }\"",
     "build": "turbo build",
     "lint": "turbo lint",
     "test": "turbo test",

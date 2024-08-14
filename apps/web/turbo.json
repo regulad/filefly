@@ -9,10 +9,13 @@
     },
     "dev": {
       "dependsOn": ["@repo/db#db:generate"],
+      "env": ["SECRET_ENCRYPTION_KEY"],
       "cache": false,
       "persistent": true
     },
     "start": {
+      "dependsOn": ["@repo/db#db:generate"],
+      "env": ["SECRET_ENCRYPTION_KEY"],
       "cache": false,
       "persistent": true
     }

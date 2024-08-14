@@ -1,3 +1,4 @@
 pnpm format
 turbo format
 turbo lint test type-check
+git update-index --again
