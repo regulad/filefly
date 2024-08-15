@@ -1,6 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "extends": ["//"],
+  "globalEnv": [
+    "AUTH_DROPBOX_APP_KEY",
+    "AUTH_DROPBOX_APP_SECRET",
+    "SELF_URL_ORIGIN",
+    "DATABASE_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "@repo/db#db:generate"],
