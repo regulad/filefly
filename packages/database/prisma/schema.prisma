@@ -18,6 +18,80 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// NextAuth-users
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  providerAccounts ProviderAccount[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
 // Task related models and enums
 
 enum TaskStatus {
@@ -31,15 +105,17 @@ enum TaskType {
 
 model TrackedTask {
   id                    String     @id @unique @default(cuid())
-  createdAt             DateTime   @default(now())
-  updatedAt             DateTime   @updatedAt
-  taskCompleted         DateTime?
-  taskWebhookSecretHash String
-  status                TaskStatus
-  type                  TaskType
-  taskError             Json?
-  taskPayload           Json?
-  taskResult            Json?
+  createdAt             DateTime   @default(now()) @map("created_at")
+  updatedAt             DateTime   @updatedAt @map("updated_at")
+  taskCompletedAt       DateTime?  @map("task_completed_at")
+  taskWebhookSecretHash String     @map("task_webhook_secret_hash")
+  status                TaskStatus @default(PENDING)
+  type                  TaskType   @map("task_type")
+  taskError             Json?      @map("task_error")
+  taskPayload           Json?      @map("task_payload")
+  taskResult            Json?      @map("task_result")
+
+  @@map("tracked_tasks")
 }
 
 // OAuth related models and enums
@@ -50,31 +126,26 @@ enum ProviderType {
   MICROSOFT_ONEDRIVE
 }
 
-model User {
-  id String @id @unique // the cognito entity id
-
-  providerAccounts ProviderAccount[]
-}
-
 model ProviderAccount {
   id      String       @id @unique @default(cuid())
   owner   User         @relation(fields: [ownerId], references: [id])
-  ownerId String
+  ownerId String       @map("owner_id")
   type    ProviderType
 
-  accessTokenEncrypted             String
-  accessTokenInitializationVector  String
-  refreshTokenEncrypted            String
-  refreshTokenInitializationVector String
+  accessTokenEncrypted             String @map("access_token_encrypted")
+  accessTokenInitializationVector  String @map("access_token_initialization_vector")
+  refreshTokenEncrypted            String @map("refresh_token_encrypted")
+  refreshTokenInitializationVector String @map("refresh_token_initialization_vector")
 
   // these are fields determined from the accessToken
-  accountId             String    @unique
-  accessTokenExpiresAt  DateTime
-  refreshTokenExpiresAt DateTime?
-  scopes                String[]
+  accountId             String    @unique @map("account_id")
+  accessTokenExpiresAt  DateTime  @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scopes                String[]  @map("scopes")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([ownerId, type, accountId])
+  @@map("provider_accounts")
 }

@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "db:generate": "prisma generate --generator javascript",
-    "db:push": "prisma db push --skip-generate",
-    "db:migrate": "prisma migrate dev",
+    "db:push": "dotenvx run --env-file=.env.local -- prisma db push --skip-generate",
+    "db:migrate": "dotenvx run --env-file=.env.local -- prisma migrate dev",
     "db:format": "prisma format",
-    "db:seed": "tsx ./src/seed.ts"
+    "db:seed": "dotenvx run --env-file=.env.local -- tsx ./src/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.7.0",
     "prisma": "^5.18.0",
     "tsx": "^4.16.5"
   },
