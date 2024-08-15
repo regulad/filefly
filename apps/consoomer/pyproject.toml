@@ -36,7 +36,6 @@ show_error_codes = true
 [tool.pylint.format]
 max-line-length = "120"
 
-
 [tool.black]
 line-length = 120
 target-version = ['py311']

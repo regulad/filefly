@@ -20,7 +20,7 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["flake8"],
+      "dependsOn": ["flake8", "db:generate"],
       "inputs": ["src/**/*.py", "pyproject.toml"],
       "outputs": []
     },

@@ -1,5 +1,6 @@
 appId: com.electron.app
 productName: relay-client
+electronVersion: 31.0.2
 directories:
   buildResources: build
 files:
