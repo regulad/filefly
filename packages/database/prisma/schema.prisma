@@ -34,7 +34,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  providerAccounts ProviderAccount[]
+  providerAccounts   ProviderAccount[]
+  graphSubscriptions GraphSubscription[]
 }
 
 model Account {
@@ -148,4 +149,20 @@ model ProviderAccount {
 
   @@unique([ownerId, type, accountId])
   @@map("provider_accounts")
+}
+
+// microsoft graph webhook subscription
+
+model GraphSubscription {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId     String   @unique
+  resourceId         String
+  expirationDateTime DateTime
+  hashedClientState  String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([expirationDateTime, userId])
 }
