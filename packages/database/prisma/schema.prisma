@@ -161,8 +161,24 @@ model GraphSubscription {
   resourceId         String
   expirationDateTime DateTime
   hashedClientState  String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([expirationDateTime, userId])
+}
+
+// google drive webhook subscription
+
+model GoogleDriveWebhook {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  channelId  String   @unique
+  resourceId String
+  expiration DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, expiration])
 }

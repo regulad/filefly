@@ -1,10 +1,16 @@
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
+import { decrypt, encrypt } from "@/utils/secret-encryption";
 import { generateClientState } from "@/utils/state-secrets";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { OAuth2Client } from "google-auth-library";
 import Dropbox from "next-auth/providers/dropbox";
+import Google from "next-auth/providers/google";
+import NextAuth, { Account } from "next-auth";
 import getPrisma from "@/utils/database";
-import NextAuth from "next-auth";
+import { ProviderType } from "@repo/db";
+import { google } from "googleapis";
+import { uuid } from "uuidv4";
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars -- declared in local turbo.json
 export const basePath = process.env.SELF_URL_ORIGIN;
@@ -95,6 +101,256 @@ export async function createOrUpdateGraphSubscription(
   }
 }
 
+// eslint-disable-next-line turbo/no-undeclared-env-vars -- declared in local turbo.json
+const googleClientId = process.env.AUTH_GOOGLE_CLIENT_ID;
+// eslint-disable-next-line turbo/no-undeclared-env-vars -- declared in local turbo.json
+const googleClientSecret = process.env.AUTH_GOOGLE_CLIENT_SECRET;
+
+if (!googleClientId) {
+  throw new Error("AUTH_GOOGLE_CLIENT_ID environment variable is not set");
+}
+
+if (!googleClientSecret) {
+  throw new Error("AUTH_GOOGLE_CLIENT_SECRET environment variable is not set");
+}
+
+export async function getGoogleOAuth2ClientForCredentials(
+  googleAccountId: string,
+  accessToken: string,
+  refreshToken: string,
+): Promise<OAuth2Client> {
+  const prisma = getPrisma();
+
+  const oauth2Client = new google.auth.OAuth2(
+    googleClientId,
+    googleClientSecret,
+    `${basePath}/api/auth/callback/google`, // Your redirect URI
+  );
+
+  oauth2Client.setCredentials({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
+
+  // Set up automatic token refresh
+  oauth2Client.on("tokens", async (tokens) => {
+    if (tokens.access_token) {
+      const { encryptedData: encryptedAccessToken, iv: accessTokenIV } =
+        encrypt(tokens.access_token);
+      await prisma.providerAccount.update({
+        where: { id: googleAccountId },
+        data: {
+          accessTokenEncrypted: encryptedAccessToken,
+          accessTokenInitializationVector: accessTokenIV,
+          accessTokenExpiresAt: tokens.expiry_date
+            ? new Date(tokens.expiry_date)
+            : undefined,
+        },
+      });
+    }
+    if (tokens.refresh_token) {
+      const { encryptedData: encryptedRefreshToken, iv: refreshTokenIV } =
+        encrypt(tokens.refresh_token);
+      await prisma.providerAccount.update({
+        where: { id: googleAccountId },
+        data: {
+          refreshTokenEncrypted: encryptedRefreshToken,
+          refreshTokenInitializationVector: refreshTokenIV,
+        },
+      });
+    }
+  });
+
+  return oauth2Client;
+}
+
+export async function getGoogleOAuth2ClientForUserId(
+  userId: string,
+): Promise<OAuth2Client> {
+  const prisma = getPrisma();
+
+  // Retrieve the encrypted tokens from the database
+  const providerAccount = await prisma.providerAccount.findFirst({
+    where: {
+      ownerId: userId,
+      type: ProviderType.GOOGLE_DRIVE,
+    },
+  });
+
+  if (!providerAccount) {
+    throw new Error("Google Drive provider account not found for user");
+  }
+
+  // Decrypt the tokens
+  const accessToken = decrypt(
+    providerAccount.accessTokenInitializationVector,
+    providerAccount.accessTokenEncrypted,
+  );
+  const refreshToken = decrypt(
+    providerAccount.refreshTokenInitializationVector,
+    providerAccount.refreshTokenEncrypted,
+  );
+
+  return getGoogleOAuth2ClientForCredentials(
+    providerAccount.id,
+    accessToken,
+    refreshToken,
+  );
+}
+
+export async function createGoogleDriveSubscription(
+  oauth2Client: OAuth2Client,
+  userId: string,
+): Promise<void> {
+  const drive = google.drive({ version: "v3", auth: oauth2Client });
+  const prisma = getPrisma();
+
+  try {
+    const channelId = uuid(); // Generate a unique channel ID
+
+    const startPageTokenResponse = await drive.changes.getStartPageToken({});
+    const pageToken = startPageTokenResponse.data.startPageToken ?? undefined;
+
+    const response = await drive.changes.watch({
+      pageToken: pageToken,
+      requestBody: {
+        id: channelId,
+        type: "web_hook",
+        address: `${basePath}/api/webhook/google-drive/${userId}`,
+        expiration: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .getTime()
+          .toString(),
+      },
+    });
+
+    const resourceId = response.data.resourceId;
+
+    if (!resourceId) {
+      throw new Error("Resource ID is missing in the response");
+    }
+
+    // Store the webhook details in the database
+    await prisma.googleDriveWebhook.upsert({
+      where: { userId: userId },
+      update: {
+        channelId: channelId,
+        resourceId: resourceId,
+        expiration: new Date(Number(response.data.expiration)),
+      },
+      create: {
+        userId: userId,
+        channelId: channelId,
+        resourceId: resourceId,
+        expiration: new Date(Number(response.data.expiration)),
+      },
+    });
+
+    console.log(`Created Google Drive webhook for user ${userId}`);
+  } catch (error) {
+    console.error("Error creating Google Drive webhook:", error);
+    throw error;
+  }
+}
+
+async function storeProviderCredentials(
+  userId: string,
+  account: Account,
+): Promise<void> {
+  const prisma = getPrisma();
+  const {
+    provider,
+    providerAccountId,
+    access_token,
+    refresh_token,
+    expires_at,
+  } = account;
+
+  if (!access_token) {
+    throw new Error("Access token is missing");
+  }
+
+  if (!refresh_token) {
+    throw new Error("Refresh token is missing");
+  }
+
+  if (!expires_at) {
+    throw new Error("Access token expiration time is missing");
+  }
+
+  let providerType: ProviderType;
+  switch (provider) {
+    case "dropbox":
+      providerType = ProviderType.DROPBOX;
+      break;
+    case "microsoft-entra-id":
+      providerType = ProviderType.MICROSOFT_ONEDRIVE;
+      break;
+    case "google":
+      providerType = ProviderType.GOOGLE_DRIVE;
+      break;
+    default:
+      throw new Error(`Unsupported provider: ${provider}`);
+  }
+
+  const { encryptedData: encryptedAccessToken, iv: accessTokenIV } =
+    encrypt(access_token);
+  const { encryptedData: encryptedRefreshToken, iv: refreshTokenIV } =
+    encrypt(refresh_token);
+
+  await prisma.providerAccount.upsert({
+    where: {
+      ownerId_type_accountId: {
+        ownerId: userId,
+        type: providerType,
+        accountId: providerAccountId,
+      },
+    },
+    update: {
+      accessTokenEncrypted: encryptedAccessToken,
+      accessTokenInitializationVector: accessTokenIV,
+      refreshTokenEncrypted: encryptedRefreshToken,
+      refreshTokenInitializationVector: refreshTokenIV,
+      accessTokenExpiresAt: new Date(expires_at * 1000),
+      scopes: account.scope ? account.scope.split(" ") : [],
+    },
+    create: {
+      owner: { connect: { id: userId } },
+      type: providerType,
+      accountId: providerAccountId,
+      accessTokenEncrypted: encryptedAccessToken,
+      accessTokenInitializationVector: accessTokenIV,
+      refreshTokenEncrypted: encryptedRefreshToken,
+      refreshTokenInitializationVector: refreshTokenIV,
+      accessTokenExpiresAt: new Date(expires_at * 1000),
+      scopes: account.scope ? account.scope.split(" ") : [],
+    },
+  });
+}
+
+async function registerWebhook(
+  userId: string,
+  account: Account,
+): Promise<void> {
+  const { provider, access_token } = account;
+
+  if (!access_token) {
+    throw new Error("Access token is missing");
+  }
+
+  switch (provider) {
+    case "microsoft-entra-id":
+      await createOrUpdateGraphSubscription(userId, access_token);
+      break;
+    case "google": {
+      // have to scope in to create a const
+      const oauth2Client = await getGoogleOAuth2ClientForUserId(userId);
+      await createGoogleDriveSubscription(oauth2Client, access_token);
+      break;
+    }
+    // dropbox uses one webhook for all accounts; manual registration is not required
+  }
+}
+
 // @ts-ignore -- complaint about auth's type source
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -122,9 +378,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         tenantId: process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID,
       },
     }),
+    Google({
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+      authorization: {
+        params: {
+          access_type: "offline",
+          prompt: "consent",
+          scope: [
+            "openid",
+            "profile",
+            "email",
+            "https://www.googleapis.com/auth/drive.readonly",
+            "https://www.googleapis.com/auth/drive.metadata.readonly",
+          ].join(" "),
+        },
+      },
+    }),
   ],
   basePath: basePath,
   // eslint-disable-next-line turbo/no-undeclared-env-vars -- implicitly set at build time
   debug: process.env.NODE_ENV !== "production",
   adapter: PrismaAdapter(getPrisma()), // requires DATABASE_URL at build time, possible problem?
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account && user.id) {
+        await storeProviderCredentials(user.id, account);
+        try {
+          await registerWebhook(user.id, account);
+        } catch (error) {
+          console.error("Error registering webhook:", error);
+        }
+      }
+      return true;
+    },
+  },
 });
