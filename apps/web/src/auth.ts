@@ -252,6 +252,19 @@ export async function createGoogleDriveSubscription(
   }
 }
 
+function getProviderTypeForNextAuthProviderString(provider: string): ProviderType | null {
+  switch (provider) {
+    case "dropbox":
+      return ProviderType.DROPBOX;
+    case "microsoft-entra-id":
+      return ProviderType.MICROSOFT_ONEDRIVE;
+    case "google":
+      return ProviderType.GOOGLE_DRIVE;
+    default:
+      return null;
+  }
+}
+
 async function storeProviderCredentials(
   userId: string,
   account: Account,
@@ -277,19 +290,10 @@ async function storeProviderCredentials(
     throw new Error("Access token expiration time is missing");
   }
 
-  let providerType: ProviderType;
-  switch (provider) {
-    case "dropbox":
-      providerType = ProviderType.DROPBOX;
-      break;
-    case "microsoft-entra-id":
-      providerType = ProviderType.MICROSOFT_ONEDRIVE;
-      break;
-    case "google":
-      providerType = ProviderType.GOOGLE_DRIVE;
-      break;
-    default:
-      throw new Error(`Unsupported provider: ${provider}`);
+  const providerType = getProviderTypeForNextAuthProviderString(provider);
+
+  if (!providerType) {
+    throw new Error("Unsupported provider type");
   }
 
   const { encryptedData: encryptedAccessToken, iv: accessTokenIV } =
@@ -349,6 +353,41 @@ async function registerWebhook(
     }
     // dropbox uses one webhook for all accounts; manual registration is not required
   }
+}
+
+export async function doTokenRefresh(
+  userId: string,
+  providerType: ProviderType,
+): Promise<void> {
+  const prisma = getPrisma();
+
+  const providerAccount = await prisma.providerAccount.findFirst({
+    where: {
+      ownerId: userId,
+      type: providerType,
+    },
+  });
+
+  if (!providerAccount) {
+    throw new Error("Provider account not found");
+  }
+
+  if (!providerAccount.refreshTokenEncrypted) {
+    throw new Error("Refresh token is missing");
+  }
+
+  const refreshToken = decrypt(
+    providerAccount.refreshTokenInitializationVector,
+    providerAccount.refreshTokenEncrypted,
+  );
+
+  const accessToken = decrypt(
+    providerAccount.accessTokenInitializationVector,
+    providerAccount.accessTokenEncrypted,
+  );
+
+  // see if access token is still valid by surveying the
+  // TODO
 }
 
 // @ts-ignore -- complaint about auth's type source

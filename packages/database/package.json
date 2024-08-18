@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "prisma generate --generator javascript",
     "db:generate": "prisma generate --generator javascript",
     "db:push": "dotenvx run --env-file=.env.local -- prisma db push --skip-generate",
     "db:migrate": "dotenvx run --env-file=.env.local -- prisma migrate dev",

@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "poetry install",
     "start": "poetry run python -m consoomer",
-    "dev": "poetry run python -m consoomer",
+    "dev": "nodemon -e py --watch src --exec \"poetry run python -m\" consoomer",
     "lint": "poetry run pylint src",
     "type-check": "poetry run mypy src",
     "format": "poetry run black src",
@@ -19,5 +19,8 @@
     "@repo/db": "workspace:*"
   },
   "keywords": [],
-  "author": ""
+  "author": "",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }

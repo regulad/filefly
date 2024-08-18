@@ -29,7 +29,10 @@ async def message_callback(prisma: Prisma, cache: Redis, message: IncomingMessag
     """Callback function for processing messages from the vectorize queue."""
 
     async with message.process():
-        pass  # process the message here, it will nack if an exception is raised
+        img_model = SentenceTransformer('clip-ViT-B-32')
+        text_model = SentenceTransformer('sentence-transformers/clip-ViT-B-32-multilingual-v1')
+
+        pass  # TODO: process the message here, it will nack if an exception is raised
 
 
 async def main() -> None:
